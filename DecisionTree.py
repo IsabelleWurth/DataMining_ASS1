@@ -222,3 +222,17 @@ class DecisionTree():
         node.right = right_node
         return node
 
+    def tree_grow_b(self, x, y, m):
+        trees = []
+        
+        for i in range(m):
+            # Generate a bootstrap sample
+            indices = np.random.choice(len(y), len(y))
+            x_bootstrap = x[indices]
+            y_bootstrap = y[indices]
+    
+            # Grow a tree on the bootstrap sample
+            tree = self._grow_tree(x_bootstrap, y_bootstrap)
+            trees.append(tree)
+        
+        return trees
