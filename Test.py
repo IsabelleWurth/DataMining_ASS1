@@ -6,10 +6,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def pre_process(data):
-    data = pd.DataFrame(data, columns=['age', 'married', 'house', 'income', 'gender', 'class'])
+    data = pd.DataFrame(data)
     data = data.astype(int)
-    classification = data['class'].to_numpy()
-    features = data.drop('class', axis=1).to_numpy()
+    target_column = data[-1]
+    classification = data[target_column].to_numpy()
+    features = data.drop(target_column, axis=1).to_numpy()
     return features, classification
 
 def pre_process_indian(data):
