@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 from DecisionTree import DecisionTree, tree_pred
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def pre_process(data):
     data = pd.DataFrame(data, columns=['age', 'married', 'house', 'income', 'gender', 'class'])
@@ -9,33 +12,43 @@ def pre_process(data):
     features = data.drop('class', axis=1).to_numpy()
     return features, classification
 
+def pre_process_indian(data):
+    data = pd.DataFrame(data, columns = ['zero','one','two','three','four','five', 'six', 'seven', 'class'])
+    int_columns = ['zero', 'one', 'two', 'three', 'four', 'seven', 'class']  # Columns to be converted to int
+    data[int_columns] = data[int_columns].astype(int)
+
+    # Convert specific columns to floats
+    float_columns = ['five', 'six']  # Columns to be converted to float
+    data[float_columns] = data[float_columns].astype(float)
+    classification = data['class'].to_numpy()
+    features = data.drop('class', axis=1).to_numpy()
+    return features, classification
+
+def evaluate(real_class, predictions):
+    cm = confusion_matrix(real_class, predictions)
+    
+    # Create a DataFrame for better readability
+    cm_df = pd.DataFrame(cm)
+    return cm_df
+
+
+
 if __name__ == "__main__":
     # Load dataset
-    data = np.array([
-        [22, 0, 0, 28, 1, 0],  # Features: age, married, house, income, gender
-        [46, 0, 1, 32, 0, 0],
-        [24, 1, 1, 24, 1, 0],
-        [25, 0, 0, 27, 1, 0],
-        [29, 1, 1, 32, 0, 0],
-        [45, 1, 1, 30, 0, 1],
-        [63, 1, 1, 58, 1, 1],
-        [36, 1, 0, 52, 1, 1],
-        [23, 0, 1, 40, 0, 1],
-        [50, 1, 1, 28, 0, 1]
-    ])
+    data = data = np.genfromtxt('indian.txt', delimiter=',')
 
     # Pre-process data to optain features (x) and labels (y)
-    x, y = pre_process(data)
+    x, y = pre_process_indian(data)
 
     # Initiate DecisionTree with nmin, minleaf, en nfeat
-    tree = DecisionTree(nmin=2, minleaf=1, nfeat=5)
+    tree = DecisionTree(nmin=20, minleaf=5, nfeat=8)
 
     # Fit the decision tree 
     tree.fit(x, y)
 
     # Nieuwe data waarvoor we voorspellingen willen doen
-    new_data = np.array([[30, 1, 1, 40, 1],
-                         [55, 0, 1, 30, 0]])
+    new_data = x
+    new_data_predictions = y
     
     # Je zou nu de tree structuur kunnen visualiseren of traverseren om te zien of de boom goed is gegroeid
     # def traverse_tree(node, depth=0):
@@ -52,5 +65,6 @@ if __name__ == "__main__":
 
     # Voorspellingen maken met de getrainde boom
     predictions = tree_pred(new_data, tree.root)
-
-    print("Predicted class labels:", predictions)
+    evaluations = evaluate(new_data_predictions, predictions)
+    #print("Predicted class labels:", predictions)
+    print(evaluations)
