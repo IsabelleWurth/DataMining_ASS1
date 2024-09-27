@@ -5,6 +5,11 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
+
 def pre_process(data):
     data = pd.DataFrame(data)
     data = data.astype(int)
@@ -32,6 +37,19 @@ def evaluate(real_class, predictions):
     cm_df = pd.DataFrame(cm)
     return cm_df
 
+def metrics(y_test_labels, y_pred_labels):
+        
+    # Bereken de metrics voor de Decision Tree (1=pos en 0=neg)
+    accuracy = accuracy_score(y_test_labels, y_pred_labels)
+    precision = precision_score(y_test_labels, y_pred_labels)
+    recall = recall_score(y_test_labels, y_pred_labels)
+
+    print("Decision Tree Metrics:")
+    print(f"Accuracy: {accuracy}")
+    print(f"Precision: {precision}")
+    print(f"Recall: {recall}\n")
+
+    return accuracy, precision, recall
 
 
 if __name__ == "__main__":
@@ -66,6 +84,12 @@ if __name__ == "__main__":
 
     # Voorspellingen maken met de getrainde boom
     predictions = tree_pred(new_data, tree.root)
-    evaluations = evaluate(new_data_predictions, predictions)
+
+    print("Predicted class labels:", predictions)
+    print("dit is labels: ", y)
+    print(" dit is predictions: ", predictions)
+    metrics = metrics(y, predictions)
+    print("metrics: ", metrics)
+    #evaluations = evaluate(new_data_predictions, predictions)
     #print("Predicted class labels:", predictions)
-    print(evaluations)
+    #print(evaluations)
