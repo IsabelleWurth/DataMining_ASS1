@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from DecisionTree import DecisionTree, tree_pred
+from DecisionTree import DecisionTree, tree_pred, tree_pred_b
 
 def pre_process(data):
     data = pd.DataFrame(data, columns=['age', 'married', 'house', 'income', 'gender', 'class'])
@@ -52,5 +52,7 @@ if __name__ == "__main__":
 
     # Voorspellingen maken met de getrainde boom
     predictions = tree_pred(new_data, tree.root)
+    trees = tree.tree_grow_b(x, y, m=3)
+    y = tree_pred_b(new_data, trees)
 
-    print("Predicted class labels:", predictions)
+    #print("Predicted class labels:", predictions)

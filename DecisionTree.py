@@ -1,5 +1,7 @@
 from TreeNode import TreeNode
 import numpy as np
+from collections import Counter
+import pandas as pd
 
 def tree_pred(x, tr):
     """
@@ -23,6 +25,20 @@ def tree_pred(x, tr):
 
     return y
 
+def tree_pred_b(x, trees):
+
+    y = np.zeros((x.shape[0], len(trees)), dtype=int)
+
+    # Get predictions from each tree
+    for i, tree in enumerate(trees):
+        y[:, i] = tree_pred(x, tree)
+    
+    # Makes dataframe of values and checks what is the majority vote
+    df_y = pd.DataFrame(y) 
+    final_predictions = df_y.mode(axis=1)[0].values
+
+    return final_predictions
+
 def _pred_individual(case, node):
     """
     Recursively traverse the tree to predict the class labels for an individual case.
@@ -43,6 +59,8 @@ def _pred_individual(case, node):
         return _pred_individual(case, node.left)
     else: 
         return _pred_individual(case, node.right)
+
+
     
 class DecisionTree():
     def __init__(self, nmin, minleaf, nfeat) -> None:
@@ -67,8 +85,8 @@ class DecisionTree():
             x: Data Matrix (features).
             y: Class labels (binary).
         """
-        print("Dataset:", x)
-        print("Dataset:", y)
+        #print("Dataset:", x)
+        #print("Dataset:", y)
 
         # Call the function to recursively grow the tree
         self.root = self._grow_tree(x, y)
@@ -139,7 +157,7 @@ class DecisionTree():
                 max_value = np.max(filtered_values)
                 # Update the threshold value to be the exact middle between max_value and threshold
                 threshold = (threshold + max_value) / 2
-                print(f"Thresholdvalue:", threshold)
+                #print(f"Thresholdvalue:", threshold)
                 # Split the data based on the current threshold
                 left_split = x[:, feature] < threshold
                 right_split = ~left_split
@@ -178,8 +196,8 @@ class DecisionTree():
             A TreeNode that represents the root of the tree.
         """
         # Print de huidige dataset en labels voor elke node
-        print(f"Current node dataset (size: {len(y)}):\n{x}")
-        print(f"Current node labels:\n{y}")
+        #print(f"Current node dataset (size: {len(y)}):\n{x}")
+        #print(f"Current node labels:\n{y}")
 
         # Check stopping criteria (nmin, minleaf)
         if len(y) < self.nmin or np.all( y == y[0]):
@@ -191,7 +209,7 @@ class DecisionTree():
         gain, split_feature, split_value, = self._best_split(x, y)
 
         # Print the split details
-        print(f"Best split: feature {split_feature} with threshold {split_value} (gain: {gain})")
+        #print(f"Best split: feature {split_feature} with threshold {split_value} (gain: {gain})")
         
         # If no split is possible, return a leaf node
         if gain == 0: 
@@ -203,20 +221,20 @@ class DecisionTree():
         right_split = ~left_split
         
         # Check whether left and right split contain data
-        print(f"Left split size: {np.sum(left_split)}, Right split size: {np.sum(right_split)}")
+        #print(f"Left split size: {np.sum(left_split)}, Right split size: {np.sum(right_split)}")
         
         # Recursively continue growing left and right branch
         if np.sum(left_split) == 0 or np.sum(right_split) == 0:
             # Create a leaf node
             majority_class = np.argmax(np.bincount(y))
-            print(f"One split is empty, creating leaf node with class: {majority_class}")
+            #print(f"One split is empty, creating leaf node with class: {majority_class}")
             return TreeNode(gini=self._gini(y), c_label=majority_class)
         
         left_node = self._grow_tree(x[left_split], y[left_split])
         right_node = self._grow_tree(x[right_split], y[right_split])
 
         # Return the node with split information
-        print(f"Node with split on feature {split_feature} and threshold {split_value}")
+        #print(f"Node with split on feature {split_feature} and threshold {split_value}")
         node = TreeNode(gini=self._gini(y), gain=gain, split_feature=split_feature, split_value=split_value)
         node.left = left_node
         node.right = right_node
@@ -230,7 +248,7 @@ class DecisionTree():
             indices = np.random.choice(len(y), len(y))
             x_bootstrap = x[indices]
             y_bootstrap = y[indices]
-    
+            
             # Grow a tree on the bootstrap sample
             tree = self._grow_tree(x_bootstrap, y_bootstrap)
             trees.append(tree)
