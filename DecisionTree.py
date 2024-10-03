@@ -222,4 +222,32 @@ class DecisionTree():
         node.left = left_node
         node.right = right_node
         return node
+    
+    def tree_grow_b(self, x, y, m):
+            trees = []
+            
+            for i in range(m):
+                # Generate a bootstrap sample
+                indices = np.random.choice(len(y), len(y))
+                x_bootstrap = x[indices]
+                y_bootstrap = y[indices]
+        
+                # Grow a tree on the bootstrap sample
+                tree = self._grow_tree(x_bootstrap, y_bootstrap)
+                trees.append(tree)
+            
+            return trees
 
+    def tree_pred_b(x, trees):
+
+        y = np.zeros((x.shape[0], len(trees)), dtype=int)
+
+        # Get predictions from each tree
+        for i, tree in enumerate(trees):
+            y[:, i] = tree_pred(x, tree)
+        
+        # Makes dataframe of values and checks what is the majority vote
+        df_y = pd.DataFrame(y) 
+        final_predictions = df_y.mode(axis=1)[0].values
+
+        return final_predictions

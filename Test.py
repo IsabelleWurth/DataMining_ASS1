@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from DecisionTree import DecisionTree, tree_pred
+from DecisionTree import DecisionTree, tree_pred, tree_pred_b
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
