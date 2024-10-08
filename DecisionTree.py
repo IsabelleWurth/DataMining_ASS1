@@ -129,12 +129,12 @@ class DecisionTree():
             
         return trees
     
-    def tree_pred_b(x, trees):
+    def tree_pred_b(self, x, trees):
         y = np.zeros((x.shape[0], len(trees)), dtype=int)
 
         # Get predictions from each tree
         for i, tree in enumerate(trees):
-            y[:, i] = tree_pred(x, tree)
+            y[:, i] = self.tree_pred(x, tree)
         
         # Makes dataframe of values and checks what is the majority vote
         df_y = pd.DataFrame(y) 

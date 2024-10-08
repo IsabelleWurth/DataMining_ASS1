@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from DecisionTree import DecisionTree, tree_pred, tree_pred_b
+from DecisionTree import DecisionTree
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -51,7 +51,7 @@ def evaluate(real_class, predictions):
     return cm_df
 
 def metrics(y_test_labels, y_pred_labels): 
-    # Bereken de metrics voor de Decision Tree (1=pos en 0=neg)
+    # Calculate metrics for the Decision Tree (1=pos en 0=neg)
     accuracy = accuracy_score(y_test_labels, y_pred_labels)
     precision = precision_score(y_test_labels, y_pred_labels)
     recall = recall_score(y_test_labels, y_pred_labels)
@@ -70,10 +70,10 @@ if __name__ == "__main__":
     x_test, y_test = eclipse('eclipse_test.csv')
 
     # Initiate DecisionTree with nmin, minleaf, en nfeat
-    tree = DecisionTree(nmin=15, minleaf=5, nfeat=41)
+    tree = DecisionTree()
 
     # Fit the decision tree 
-    tree.fit(x_train, y_train)
+    tree.root = tree.tree_grow(x_train, y_train, nmin=15, minleaf=5, nfeat=41)
     
     # Je zou nu de tree structuur kunnen visualiseren of traverseren om te zien of de boom goed is gegroeid
     # def traverse_tree(node, depth=0):
@@ -85,13 +85,15 @@ if __name__ == "__main__":
     #         traverse_tree(node.left, depth + 1)
     #         traverse_tree(node.right, depth + 1)
 
-    # # Visualiseer de boom
+    # # Visualise the tree
     # traverse_tree(tree.root)
 
-    # Voorspellingen maken met de getrainde boom
-    predictions = tree_pred(x_test, tree.root)
+    # Create predictions using the trained tree
+    predictions = tree.tree_pred(x_test, tree.root)
     print("Predicted class labels:", predictions)
-    metrics = metrics(y_test, predictions)
-    print("metrics: ", metrics)
+    # Calculate the evaluation metrics
+    tree_metrics = metrics(y_test, predictions)
+    print("metrics: ", tree_metrics)
+    # Confusion matrix evaluation
     evaluations = evaluate(y_test, predictions)
     print(evaluations)
