@@ -2,21 +2,7 @@ import pandas as pd
 import numpy as np
 from DecisionTree import DecisionTree
 from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
-
-def pre_process(data):
-    data = pd.DataFrame(data)
-    data = data.astype(int)
-    target_column = data[-1]
-    classification = data[target_column].to_numpy()
-    features = data.drop(target_column, axis=1).to_numpy()
-    return features, classification
 
 def pre_process_indian(data):
     data = pd.DataFrame(data, columns = ['zero','one','two','three','four','five', 'six', 'seven', 'class'])
@@ -33,7 +19,7 @@ def pre_process_indian(data):
 def eclipse(file):
     df = pd.read_csv(file, sep = ';')
 
-    # dit zijn vgm de predictors die we moeten gebruiken (zie tabel uit artikel). Het zijn er ook 41 dus dat klopt 
+    # 41 features as predictors and the 'post' feature to predict 
     predictors = ['pre','FOUT_avg', 'FOUT_max', 'FOUT_sum', 'MLOC_avg', 'MLOC_max', 'MLOC_sum', 'NBD_avg', 'NBD_max', 'NBD_sum', 'NOF_avg', 'NOF_max', 'NOF_sum', 'NOM_avg', 'NOM_max', 'NOM_sum', 'NSF_avg', 'NSF_max', 'NSF_sum', 'NSM_avg', 'NSM_max', 'NSM_sum', 'PAR_avg', 'PAR_max', 'PAR_sum', 'VG_avg', 'VG_max', 'VG_sum', 'NOCU', 'ACD_avg', 'ACD_max', 'ACD_sum', 'NOI_avg', 'NOI_max', 'NOI_sum', 'NOT_avg', 'NOT_max', 'NOT_sum', 'TLOC_avg', 'TLOC_max', 'TLOC_sum']
     target = 'post'
     df[target] = df[target].astype(int)
@@ -44,8 +30,8 @@ def eclipse(file):
     target = df[target].to_numpy()
     return variables, target
 
-
 def evaluate(real_class, predictions):
+    # Make a confusion matrix
     cm = confusion_matrix(real_class, predictions) 
     cm_df = pd.DataFrame(cm)
     return cm_df
@@ -69,31 +55,34 @@ if __name__ == "__main__":
     x_train, y_train = eclipse('eclipse_train.csv')
     x_test, y_test = eclipse('eclipse_test.csv')
 
-    # Initiate DecisionTree with nmin, minleaf, en nfeat
-    tree = DecisionTree()
+    # Initiate DecisionTree
+    single_tree = DecisionTree()
+    bagging_tree = DecisionTree()
+    rf_tree = DecisionTree()
 
-    # Fit the decision tree 
-    trees = tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=6)
- 
-    # Je zou nu de tree structuur kunnen visualiseren of traverseren om te zien of de boom goed is gegroeid
-    # def traverse_tree(node, depth=0):
-    #     """Recursively traverse the tree to print its structure."""
-    #     if node.is_terminal():
-    #         print(f"{'  '*depth}Leaf node with class: {node.c_label}, Gini: {node.gini}")
-    #     else:
-    #         print(f"{'  '*depth}Split on feature {node.split_feature} with threshold {node.split_value}, Gini: {node.gini}")
-    #         traverse_tree(node.left, depth + 1)
-    #         traverse_tree(node.right, depth + 1)
+    # Grow the decision tree (single tree, bagging and random forest)
+    single_tree.root = single_tree.tree_grow(x_train, y_train, nmin=15, minleaf=5, nfeat=41)
+    bagging_trees = bagging_tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=41)
+    rf_trees = rf_tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=6)
 
-    # # Visualise the tree
-    # traverse_tree(tree.root)
-
-    # Create predictions using the trained tree
-    predictions = tree.tree_pred(x_test, trees)
-    print("Predicted class labels:", predictions)
-    # Calculate the evaluation metrics
-    tree_metrics = metrics(y_test, predictions)
+    # Create predictions using the trained tree and evaluate (single tree)
+    predictions_single = single_tree.tree_pred(x_test, single_tree.root)
+    tree_metrics = metrics(y_test, predictions_single)
     print("metrics: ", tree_metrics)
-    # Confusion matrix evaluation
-    evaluations = evaluate(y_test, predictions)
+    evaluations = evaluate(y_test, predictions_single)
     print(evaluations)
+
+    # Create predictions using the trained tree and evaluate (bagging)
+    predictions_bagging = bagging_tree.tree_pred_b(x_test, bagging_trees)
+    tree_metrics = metrics(y_test, predictions_bagging)
+    print("metrics: ", tree_metrics)
+    evaluations = evaluate(y_test, predictions_bagging)
+    print(evaluations)
+
+    # Create predictions using the trained tree and evaluate (random forest)
+    predictions_rf = rf_tree.tree_pred(x_test, rf_trees)
+    tree_metrics = metrics(y_test, predictions_rf)
+    print("metrics: ", tree_metrics)
+    evaluations = evaluate(y_test, predictions_rf)
+    print(evaluations)
+

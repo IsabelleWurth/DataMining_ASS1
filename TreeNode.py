@@ -19,7 +19,7 @@ class TreeNode():
         # Class label - majority class label which is only used for leaf node
         self.c_label = c_label
 
-        # Feature index and threshold value for splitting - if node not a leaf node
+        # Feature index and threshold value for splitting - if node is not a leaf node
         self.split_feature = split_feature
         self.split_value = split_value
 
