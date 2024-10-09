@@ -73,8 +73,8 @@ if __name__ == "__main__":
     tree = DecisionTree()
 
     # Fit the decision tree 
-    tree.root = tree.tree_grow(x_train, y_train, nmin=15, minleaf=5, nfeat=41)
-    
+    trees = tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=6)
+ 
     # Je zou nu de tree structuur kunnen visualiseren of traverseren om te zien of de boom goed is gegroeid
     # def traverse_tree(node, depth=0):
     #     """Recursively traverse the tree to print its structure."""
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     # traverse_tree(tree.root)
 
     # Create predictions using the trained tree
-    predictions = tree.tree_pred(x_test, tree.root)
+    predictions = tree.tree_pred(x_test, trees)
     print("Predicted class labels:", predictions)
     # Calculate the evaluation metrics
     tree_metrics = metrics(y_test, predictions)

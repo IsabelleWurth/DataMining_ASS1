@@ -34,7 +34,7 @@ class DecisionTree():
             return TreeNode(gini=self._gini(y), c_label=majority_class)
 
         # Find the best split on nfeat features
-        gain, split_feature, split_value, = self._best_split(x, y, nmin, nfeat, minleaf)
+        gain, split_feature, split_value, = self._best_split(x, y, nmin, minleaf, nfeat)
 
         # Print the split details
         # print(f"Best split: feature {split_feature} with threshold {split_value} (gain: {gain})")
@@ -177,6 +177,7 @@ class DecisionTree():
             best_gain: The Gini gain from the split. 
         """
         m, n = x.shape
+     
 
         # Check if the node has fewer observations than mnin, return no split
         if m < nmin: 
