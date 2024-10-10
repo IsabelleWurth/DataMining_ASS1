@@ -1,3 +1,11 @@
+"""
+    Created by: 
+        - Renske Bos: 2483947
+        - Juul Petit: 6446981
+        - Vincent Huf: 4546202
+        - Isabelle Wurth: 6358500
+"""
+
 import pandas as pd
 import numpy as np
 from DecisionTree import DecisionTree
@@ -42,10 +50,10 @@ def metrics(y_test_labels, y_pred_labels):
     precision = precision_score(y_test_labels, y_pred_labels)
     recall = recall_score(y_test_labels, y_pred_labels)
 
-    print("Decision Tree Metrics:")
-    print(f"Accuracy: {accuracy}")
-    print(f"Precision: {precision}")
-    print(f"Recall: {recall}\n")
+    # print("Decision Tree Metrics:")
+    # print(f"Accuracy: {accuracy}")
+    # print(f"Precision: {precision}")
+    # print(f"Recall: {recall}\n")
 
     return accuracy, precision, recall
 
@@ -57,32 +65,49 @@ if __name__ == "__main__":
 
     # Initiate DecisionTree
     single_tree = DecisionTree()
-    bagging_tree = DecisionTree()
-    rf_tree = DecisionTree()
+    # bagging_tree = DecisionTree()
+    # rf_tree = DecisionTree()
 
     # Grow the decision tree (single tree, bagging and random forest)
-    single_tree.root = single_tree.tree_grow(x_train, y_train, nmin=15, minleaf=5, nfeat=41)
-    bagging_trees = bagging_tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=41)
-    rf_trees = rf_tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=6)
+    single_tree.root = single_tree.tree_grow(x_train, y_train, nmin=20, minleaf=5, nfeat=41)
+    # bagging_trees = bagging_tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=41)
+    # rf_trees = rf_tree.tree_grow_b(x_train, y_train, m=100, nmin=15, minleaf=5, nfeat=6)
 
     # Create predictions using the trained tree and evaluate (single tree)
     predictions_single = single_tree.tree_pred(x_test, single_tree.root)
-    tree_metrics = metrics(y_test, predictions_single)
-    print("metrics: ", tree_metrics)
-    evaluations = evaluate(y_test, predictions_single)
-    print(evaluations)
-
     # Create predictions using the trained tree and evaluate (bagging)
-    predictions_bagging = bagging_tree.tree_pred_b(x_test, bagging_trees)
-    tree_metrics = metrics(y_test, predictions_bagging)
-    print("metrics: ", tree_metrics)
-    evaluations = evaluate(y_test, predictions_bagging)
-    print(evaluations)
-
+    # predictions_bagging = bagging_tree.tree_pred_b(x_test, bagging_trees)
     # Create predictions using the trained tree and evaluate (random forest)
-    predictions_rf = rf_tree.tree_pred(x_test, rf_trees)
-    tree_metrics = metrics(y_test, predictions_rf)
-    print("metrics: ", tree_metrics)
-    evaluations = evaluate(y_test, predictions_rf)
-    print(evaluations)
+    # predictions_rf = rf_tree.tree_pred_b(x_test, rf_trees)
+        
+    # Calculate metrics for this run - TEST SINGLE 
+    single_tree_metrics_run = metrics(y_test, predictions_single)
+    single_tree_conf_matrix = evaluate(y_test, predictions_single)
+        
+    # Calculate metrics for this run - TEST BAGGING
+    # bagging_metrics_run = metrics(y_test, predictions_bagging)
+    # bagging_conf_matrix = evaluate(y_test, predictions_bagging)
+
+    # Calculate metrics for this run - TEST RANDOM FOREST
+    # rf_metrics_run = metrics(y_test, predictions_rf)
+    # rf_conf_matrix = evaluate(y_test, predictions_rf)
+
+       
+    # Summarize and print the results for each model
+    print("\nMetrics for Single Tree:")
+    print(f"Accuracy = {single_tree_metrics_run[0]}, Precision = {single_tree_metrics_run[1]}, Recall = {single_tree_metrics_run[2]}")
+    
+    # print("\nMetrics for Bagging:")
+    # print(f"Accuracy = {bagging_metrics_run[0]}, Precision = {bagging_metrics_run[1]}, Recall = {bagging_metrics_run[2]}")
+
+    # print("\nMetrics for Random Forest:")
+    # print(f"Accuracy = {rf_metrics_run[0]}, Precision = {rf_metrics_run[1]}, Recall = {rf_metrics_run[2]}")
+
+    # Print the confusion matrices if needed
+    print(f"Confusion Matrix for Single Tree Run \n{single_tree_conf_matrix}")
+    # print(f"Confusion Matrix for Bagging: \n{bagging_conf_matrix}")
+    # print(f"Confusion Matrix for Random Forest: \n{rf_conf_matrix}")
+    
+
+
 
