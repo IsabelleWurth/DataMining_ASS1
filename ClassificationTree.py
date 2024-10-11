@@ -25,11 +25,11 @@ class DecisionTree():
         criteria, the tree either finds a best_split again, or terminates.
 
         Args: 
-            x: Data Matrix (Features).
-            y: Class labels (Binary).
-            nmin: The number of observations that a node must contain at least, for it to be allowed to be split. 
-            minleaf: The minimum number of observations required for a leaf node. 
-            nfeat: The number of features that should be considered for each split. 
+            x (array): Data Matrix (Features).
+            y (array): Class labels (Binary).
+            nmin (int): The number of observations that a node must contain at least, for it to be allowed to be split. 
+            minleaf (int): The minimum number of observations required for a leaf node. 
+            nfeat (int): The number of features that should be considered for each split. 
 
         Returns:
             A TreeNode that represents the root of the tree.
@@ -103,12 +103,12 @@ class DecisionTree():
         Grow a random forest of 'm' trees using bootstrap sampling.
         
         Args:
-            x: Data Matrix (Features).
-            y: Class Labels (Binary).
-            m: The number of trees to grow in the forest.
-            nmin: The number of observations that a node must contain at least, for it to be allowed to be split.
-            minleaf: The minimum number of observations required for a leaf node.
-            nfeat: The number of features that should be considered for each split.
+            x (array): Data Matrix (Features).
+            y (array): Class Labels (Binary).
+            m (int): The number of trees to grow in the forest.
+            nmin (int): The number of observations that a node must contain at least, for it to be allowed to be split.
+            minleaf (int): The minimum number of observations required for a leaf node.
+            nfeat (int): The number of features that should be considered for each split.
             
         Returns:
             A list of trained trees.
@@ -177,11 +177,11 @@ class DecisionTree():
         Find the best feature and threshold to split on.
         
         Args:
-            x: Data Matrix (Features).
-            y: Class Labels (Binary).
-            nmin: The number of observations that a node must contain at least, for it to be allowed to be split.
-            minleaf: The minimum number of observations required for a leaf node. 
-            nfeat: The number of features that should be considered for each split. 
+            x (array): Data Matrix (Features).
+            y (array): Class Labels (Binary).
+            nmin (int): The number of observations that a node must contain at least, for it to be allowed to be split.
+            minleaf (int): The minimum number of observations required for a leaf node. 
+            nfeat (int): The number of features that should be considered for each split. 
         
         Returns:
             best_feature: Index of the best feature to split on.
@@ -256,11 +256,11 @@ class TreeNode():
         Class to initialize a TreeNode. 
 
         Args:
-            gini: Gini index of the node. 
-            gain: Gini gain (impurity reduction) from the split.
-            c_label: Majority class label - only used for the leaf nodes.
-            split_feature: Index of the feature to split on (if not leaf node)
-            split_value: Threshold value to split on (if not lead node)
+            gini (float): Gini index of the node. 
+            gain (float): Gini gain (impurity reduction) from the split.
+            c_label (int: 0 or 1): Majority class label - only used for the leaf nodes.
+            split_feature (int): Index of the feature to split on (if not leaf node)
+            split_value (float): Threshold value to split on (if not lead node)
         """
         # Gini index to determine quality of the split
         self.gini = gini
@@ -295,13 +295,13 @@ def eclipse(file):
     """
     Loads and processes the Eclipse dataset from a CSV file, extracting features and binary target labels.
 
-    Parameters:
-    file: The path to the CSV file containing the Eclipse dataset.
+    Args:
+        file (csv): The path to the CSV file containing the Eclipse dataset.
 
     Returns:
-    tuple: A tuple containing:
-        - variables: The 41 features used as predictors.
-        - target: Binary target labels, indicating the presence (1) or absence (0) of post bugs.
+        tuple: A tuple containing:
+            - variables: The 41 features used as predictors.
+            - target: Binary target labels, indicating the presence (1) or absence (0) of post bugs.
     """
     df = pd.read_csv(file, sep = ';')
 
@@ -320,12 +320,12 @@ def evaluate(real_class, predictions):
     """
     Evaluates the classification model by generating a confusion matrix from the true and predicted labels.
 
-    Parameters:
-    real_class: The true class labels.
-    predictions: The predicted class labels from the model.
+    Args:
+        real_class (array-like int): The true class labels.
+        predictions (array-like int): The predicted class labels from the model.
 
     Returns:
-    pandas.DataFrame: A confusion matrix as a DataFrame.
+        pandas.DataFrame: A confusion matrix as a DataFrame.
     """
     # Make a confusion matrix
     cm = confusion_matrix(real_class, predictions) 
@@ -336,15 +336,15 @@ def metrics(y_test_labels, y_pred_labels):
     """
     Calculates the accuracy, precision, and recall metrics for a classification model.
 
-    Parameters:
-    y_test_labels: The true class labels for the test set.
-    y_pred_labels: The predicted class labels from the model.
+    Args:
+        y_test_labels (arry-like int): The true class labels for the test set.
+        y_pred_labels (array-like int): The predicted class labels from the model.
 
     Returns:
-    tuple: A tuple containing:
-        - accuracy: The accuracy of the model.
-        - precision: The precision of the model.
-        - recall: The recall of the model.
+        tuple: A tuple containing:
+            - accuracy: The accuracy of the model.
+            - precision: The precision of the model.
+            - recall: The recall of the model.
     """
     # Calculate metrics for the Decision Tree (1=pos en 0=neg)
     accuracy = accuracy_score(y_test_labels, y_pred_labels)
