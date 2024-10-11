@@ -188,7 +188,6 @@ class DecisionTree():
             best_threshold: Threshold value for the split.
             best_gain: The Gini gain from the split. 
         """
-        np.random.seed(42)
         
         m, n = x.shape
         # Check if the node has fewer observations than nmin, return no split
